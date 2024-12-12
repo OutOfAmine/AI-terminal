@@ -5,6 +5,14 @@ export const parseCommand = (input: string) => {
   return { command: command.toLowerCase(), args: args.join(' ') };
 };
 
+export const sanitizeCommand = (command: string, args: string): string => {
+  // Hide API key in command history
+  if (command === 'setkey' && args) {
+    return `${command} [API KEY]`;
+  }
+  return `${command} ${args}`.trim();
+};
+
 export const getManualText = (command: string) => {
   const cmd = COMMANDS[command];
   if (!cmd) return `No manual entry for ${command}`;

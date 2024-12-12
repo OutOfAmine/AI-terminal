@@ -4,7 +4,7 @@ import { Terminal } from './components/Terminal';
 import { TerminalPrompt } from './components/TerminalPrompt';
 import { TerminalOutput } from './components/TerminalOutput';
 import { TerminalHistory } from './types/terminal';
-import { parseCommand, getHelpText } from './utils/terminalUtils';
+import { parseCommand, getHelpText, getSystemInfo, getManualText, sanitizeCommand } from './utils/terminalUtils';
 
 const INITIAL_MESSAGE = `
 Welcome to AI Terminal v1.0.0
@@ -18,6 +18,7 @@ function App() {
   const [input, setInput] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [theme, setTheme] = useState<'ubuntu' | 'matrix' | 'midnight'>('ubuntu');
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,7 +27,9 @@ function App() {
 
   const handleCommand = async (input: string) => {
     const { command, args } = parseCommand(input);
-    setHistory(prev => [...prev, { command: input, output: '', isLoading: true }]);
+    const sanitizedCommand = sanitizeCommand(command, args);
+    
+    setHistory(prev => [...prev, { command: sanitizedCommand, output: '', isLoading: true }]);
     setIsProcessing(true);
 
     try {
@@ -53,6 +56,23 @@ function App() {
             setApiKey(args);
             output = 'API key has been set successfully.';
           }
+          break;
+
+        case 'theme':
+          if (['ubuntu', 'matrix', 'midnight'].includes(args)) {
+            setTheme(args as 'ubuntu' | 'matrix' | 'midnight');
+            output = `Theme changed to ${args}`;
+          } else {
+            output = 'Error: Invalid theme. Available themes: ubuntu, matrix, midnight';
+          }
+          break;
+
+        case 'system':
+          output = getSystemInfo();
+          break;
+
+        case 'man':
+          output = args ? getManualText(args) : 'Error: Command name required';
           break;
 
         case 'chat':
@@ -99,18 +119,23 @@ function App() {
   };
 
   return (
-    <Terminal>
+    <Terminal theme={theme}>
       <div 
         ref={containerRef}
-        className="h-[calc(100vh-8rem)] overflow-y-auto mb-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+        className="h-[calc(100vh-8rem)] overflow-y-auto mb-4 cursor-text"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4A4A4A transparent'
+        }}
       >
-        <TerminalOutput history={history} />
+        <TerminalOutput history={history} theme={theme} />
       </div>
       <TerminalPrompt
         value={input}
         onChange={setInput}
         onSubmit={handleCommand}
         disabled={isProcessing}
+        theme={theme}
       />
     </Terminal>
   );
