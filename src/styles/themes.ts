@@ -1,0 +1,32 @@
+export const themes = {
+  ubuntu: {
+    bg: 'bg-[#300A24]',
+    headerBg: 'bg-[#3D3D3D]',
+    text: 'text-white',
+    prompt: 'text-green-400',
+    error: 'text-red-400',
+    warning: 'text-yellow-300',
+    success: 'text-green-400',
+    info: 'text-blue-400',
+  },
+  matrix: {
+    bg: 'bg-black',
+    headerBg: 'bg-[#001100]',
+    text: 'text-green-500',
+    prompt: 'text-green-400',
+    error: 'text-red-500',
+    warning: 'text-yellow-500',
+    success: 'text-green-500',
+    info: 'text-green-400',
+  },
+  midnight: {
+    bg: 'bg-[#1a1b26]',
+    headerBg: 'bg-[#24283b]',
+    text: 'text-[#c0caf5]',
+    prompt: 'text-[#7aa2f7]',
+    error: 'text-[#f7768e]',
+    warning: 'text-[#e0af68]',
+    success: 'text-[#9ece6a]',
+    info: 'text-[#7dcfff]',
+  },
+};
